@@ -15,6 +15,8 @@ function main(ARGS)
 
   # retrieve number of threads which will be the number of confs we align at the same time 
   n = Threads.nthreads()
+  # place to store the output configurations before write to file
+  out_confs = fill("", n) 
 
   open(out_conf,"a") do out
     # go through the trajectory file
@@ -28,14 +30,15 @@ function main(ARGS)
           end
           #preread the confs 
           confs = [read_conf(trajectory, top_info) for j in 1:n]
+          
           #perform alignment 
           Threads.@threads for j=1:n
             confs[j].positions = align(confs[j].positions,reference_conf.positions)
+            out_confs[j] = conf_to_str(confs[j], top_info)
           end
+          
           #write output 
-          for j=1:n
-            write_conf(out, confs[j] , top_info)
-          end
+          write(out,join(out_confs))
         end
     end
   end

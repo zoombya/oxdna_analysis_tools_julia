@@ -81,6 +81,10 @@ function write_conf(f::IO,conf::Conf,ti::TopInfo)
     """
       Output a configuration to a dat file.
     """ 
+    write(f,conf_to_str(conf,ti))    
+end
+
+function  conf_to_str(conf::Conf,ti::TopInfo)
     out = []
     push!(out, string("t = ", conf.t))
     push!(out, string("b = ", conf.b[1], " ", conf.b[2], " ", conf.b[3]))
@@ -92,5 +96,5 @@ function write_conf(f::IO,conf::Conf,ti::TopInfo)
                           0, " ", 0, " ", 0," ",
                           0, " ", 0, " ", 0))
     end
-    write(f,join(out,"\n"))    
+    return join(out,"\n")   
 end
