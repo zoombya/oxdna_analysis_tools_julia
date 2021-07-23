@@ -98,3 +98,55 @@ function  conf_to_str(conf::Conf,ti::TopInfo)
     end
     return join(out,"\n")   
 end
+
+function inbox!(conf::Conf,ti::TopInfo)
+    """
+        Bring a configuration into the simulation box.
+    """
+        real_mod = (n,m) -> begin
+        for i = 1:first(size(n))
+            n[i,1] = ((n[i,1] % m[1]) + m[1]) % m[1]
+            n[i,2] = ((n[i,2] % m[2]) + m[2]) % m[2]
+            n[i,3] = ((n[i,3] % m[3]) + m[3]) % m[3]
+        end
+        return n
+    end 
+
+
+    calc_PBC_COM = (conf, ti) -> begin
+        π2 = 2.0 * π    
+        angle = conf.positions * π2
+        for i = 1:ti.base_count
+            angle[i,1] /= conf.b[1]
+            angle[i,2] /= conf.b[2]
+            angle[i,3] /= conf.b[3]
+        end
+        n = ti.base_count
+        cm = [[sum(map(cos,angle[:,1])) / n, sum(map(sin,angle[:,1])) / n],
+              [sum(map(cos,angle[:,2])) / n, sum(map(sin,angle[:,2])) / n],
+              [sum(map(cos,angle[:,3])) / n, sum(map(sin,angle[:,3])) / n]]
+
+        pbc_com = copy(conf.b)
+        pbc_com /= π2
+        for i = 1:3
+            pbc_com[i] *=  (atan(-cm[i][2] , -cm[i][1]) + π)
+        end 
+
+        return pbc_com
+    end
+
+    target = [conf.b[1] / 2, conf.b[2] / 2, conf.b[3] / 2]
+    center = calc_PBC_COM(conf,ti)
+
+    factor = target - center
+    for i=1:ti.base_count
+        conf.positions[i,1] += factor[1]
+        conf.positions[i,2] += factor[2]
+        conf.positions[i,3] += factor[3]
+    end
+    old_poses = copy(conf.positions)
+    new_poses = real_mod(copy(conf.positions), 
+                              conf.b)
+
+    conf.positions += new_poses - old_poses
+end

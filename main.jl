@@ -12,6 +12,7 @@ function main(ARGS)
   reference_conf = open(ref_conf) do f
     read_conf(f, top_info)
   end
+  inbox!(reference_conf,top_info)
 
   if(isfile(out_conf))
     rm(out_conf)
@@ -25,6 +26,7 @@ function main(ARGS)
         for i = 1:conf_count
           println("i: ",i,"/",conf_count)
           conf = read_conf(trajectory, top_info)
+          inbox!(conf,top_info)
           # do alignment 
           conf.positions = align(conf.positions,reference_conf.positions)
           conf.a1s = align(conf.a1s,reference_conf.a1s)

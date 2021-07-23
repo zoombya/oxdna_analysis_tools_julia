@@ -22,6 +22,8 @@ function main(ARGS)
     rm(out_conf)
   end
 
+
+
   open(out_conf,"a") do out
     # go through the trajectory file
     open(alignment_conf) do trajectory
