@@ -13,6 +13,10 @@ function main(ARGS)
     read_conf(f, top_info)
   end
 
+  if(isfile(out_conf))
+    rm(out_conf)
+  end
+
   open(out_conf,"a") do out
     # go through the trajectory file
     open(alignment_conf) do trajectory
@@ -23,6 +27,8 @@ function main(ARGS)
           conf = read_conf(trajectory, top_info)
           # do alignment 
           conf.positions = align(conf.positions,reference_conf.positions)
+          conf.a1s = align(conf.a1s,reference_conf.a1s)
+          conf.a3s = align(conf.a3s,reference_conf.a3s)
           write_conf(out,conf , top_info)
         end
     end

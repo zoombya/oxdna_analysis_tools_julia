@@ -18,6 +18,10 @@ function main(ARGS)
   # place to store the output configurations before write to file
   out_confs = fill("", n) 
 
+  if(isfile(out_conf))
+    rm(out_conf)
+  end
+
   open(out_conf,"a") do out
     # go through the trajectory file
     open(alignment_conf) do trajectory
@@ -34,6 +38,8 @@ function main(ARGS)
           #perform alignment 
           Threads.@threads for j=1:n
             confs[j].positions = align(confs[j].positions,reference_conf.positions)
+            confs[j].a1s = align(confs[j].a1s,reference_conf.a1s)
+            confs[j].a3s = align(confs[j].a3s,reference_conf.a3s)
             out_confs[j] = conf_to_str(confs[j], top_info)
           end
           
