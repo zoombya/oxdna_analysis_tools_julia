@@ -1,12 +1,6 @@
 #julia -t 10 .\thread_main.jl init.top init.dat .\trajectory_md.dat out.dat
 include("./align.jl")
 include("./reader.jl")
-const cnls = [Channel(1),Channel(1),Channel(1),Channel(1),Channel(1)]
-
-function align_conf(conf,ref,  c::Channel)
-  conf.positions = align(conf.positions,ref.positions)
-  put!(c, conf)
-end
 
 function main(args)
   top_file , ref_conf, alignment_conf, out_conf = args 
