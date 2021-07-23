@@ -1,6 +1,5 @@
 include("./align.jl")
-include("reader.jl")
-
+include("./reader.jl")
 
 function main()
   # figure out how many bases and strands we work with
@@ -21,7 +20,7 @@ function main()
           println("i: ",i,"/",conf_count)
           conf = read_conf(trajectory, top_info)
           # do alignment 
-          conf.positions= align(conf.positions,reference_conf.positions)
+          conf.positions = align(conf.positions,reference_conf.positions)
           write_conf(out,conf , top_info)
         end
     end
