@@ -1,9 +1,9 @@
-#julia -t 10 .\thread_main.jl init.top init.dat .\trajectory_md.dat out.dat
+#@time main(["test\\init.top","test\\init.dat","test\\trajectory_md.dat","test\\out.dat"])
 include("./align.jl")
 include("./reader.jl")
 
-function main(args)
-  top_file , ref_conf, alignment_conf, out_conf = args 
+function main(ARGS)
+  top_file , ref_conf, alignment_conf, out_conf = ARGS 
   # figure out how many bases and strands we work with
   top_info = open(top_file) do f
       read_top(f)
@@ -40,5 +40,3 @@ function main(args)
     end
   end
 end 
-
-@time main(ARGS)
