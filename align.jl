@@ -13,11 +13,15 @@
  
   L. Martinez, Institute of Chemistry - University of Campinas
   Jan 04, 2019
+
+  rewritten to align 2 oxDNA configurations 
 """
 
 using LinearAlgebra
 
-function align( x :: Matrix{Float64}, y :: Matrix{Float64}, a1s:: Matrix{Float64},a3s:: Matrix{Float64} )
+function align!( conf::Conf, ref_conf::Conf )
+  x = copy(conf.positions)
+  y = copy(ref_conf.positions)
 
   n = size(x,1)
 
@@ -106,9 +110,9 @@ function align( x :: Matrix{Float64}, y :: Matrix{Float64}, a1s:: Matrix{Float64
   for i in 1:n
     for j in 1:3
       for k in 1:3
-        xnew[i,j] = xnew[i,j] + u[j,k] * x[i,k]
-        a1snew[i,j] = a1snew[i,j] + u[j,k] * a1s[i,k]
-        a3snew[i,j] = a3snew[i,j] + u[j,k] * a3s[i,k]
+        xnew[i,j]   +=  u[j,k] * x[i,k]
+        a1snew[i,j] +=  u[j,k] * conf.a1s[i,k]
+        a3snew[i,j] +=  u[j,k] * conf.a3s[i,k]
       end 
     end
   end
@@ -119,14 +123,10 @@ function align( x :: Matrix{Float64}, y :: Matrix{Float64}, a1s:: Matrix{Float64
   for i in 1:n
     for j in 1:3
       xnew[i,j] = xnew[i,j] + cmy[j]
-      a1s[i,j] = a1snew[i,j] + cmy[j]
-      a3s[i,j] = a3snew[i,j] + cmy[j]
-
-      y[i,j] = y[i,j] + cmy[j]
-      x[i,j] = x[i,j] + cmx[j]
     end
   end
 
-  return xnew, a1snew, a3snew
-
+  conf.positions =  xnew
+  conf.a1s = a1snew
+  conf.a3s = a3snew
 end
