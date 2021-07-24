@@ -28,9 +28,7 @@ function main(ARGS)
           conf = read_conf(trajectory, top_info)
           inbox!(conf,top_info)
           # do alignment 
-          conf.positions = align(conf.positions,reference_conf.positions)
-          conf.a1s       = align(conf.a1s,reference_conf.a1s)
-          conf.a3s       = align(conf.a3s,reference_conf.a3s)
+          conf.positions, conf.a1s, conf.a3s = align(conf.positions, reference_conf.positions, conf.a1s, conf.a3s)
           write_conf(out,conf , top_info)
         end
     end

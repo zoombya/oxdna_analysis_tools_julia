@@ -17,7 +17,7 @@
 
 using LinearAlgebra
 
-function align( x :: Matrix{Float64}, y :: Matrix{Float64} )
+function align( x :: Matrix{Float64}, y :: Matrix{Float64}, a1s:: Matrix{Float64},a3s:: Matrix{Float64} )
 
   n = size(x,1)
 
@@ -100,24 +100,33 @@ function align( x :: Matrix{Float64}, y :: Matrix{Float64} )
   # Rotate vector x [will be stored in xnew], and restore y
 
   xnew = zeros(n,3)
+  a1snew = zeros(n,3)
+  a3snew = zeros(n,3)
+
   for i in 1:n
     for j in 1:3
       for k in 1:3
         xnew[i,j] = xnew[i,j] + u[j,k] * x[i,k]
+        a1snew[i,j] = a1snew[i,j] + u[j,k] * a1s[i,k]
+        a3snew[i,j] = a3snew[i,j] + u[j,k] * a3s[i,k]
       end 
     end
   end
+
 
   # Translate vector to the centroid of y [and restore x and y]
 
   for i in 1:n
     for j in 1:3
       xnew[i,j] = xnew[i,j] + cmy[j]
+      a1s[i,j] = a1snew[i,j] + cmy[j]
+      a3s[i,j] = a3snew[i,j] + cmy[j]
+
       y[i,j] = y[i,j] + cmy[j]
       x[i,j] = x[i,j] + cmx[j]
     end
   end
 
-  return xnew
+  return xnew, a1snew, a3snew
 
 end
