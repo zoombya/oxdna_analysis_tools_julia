@@ -1,6 +1,6 @@
 #@time main(["test\\init.top","test\\init.dat","test\\trajectory_md.dat","test\\out.dat"])
-include("./align.jl")
-include("./reader.jl")
+include("oxdna/base.jl")
+include("oxdna/align.jl")
 
 function main(ARGS)
   top_file , ref_conf, alignment_conf, out_conf = ARGS 
